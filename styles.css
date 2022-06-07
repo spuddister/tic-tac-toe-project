@@ -1,4 +1,32 @@
-.button {
+/* .button {
     min-height: 100px;
     min-width: 100px;
+} */
+
+.gameboard-wrapper {
+    min-width: 350px;
+    min-height: 350px;
+    background-color: #363636;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 5px;
+    overflow: hidden;
+    border: #363636 1px solid;
+}
+
+.tiles {
+    background-color: white;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tiles:hover {
+    transform: scale(1.05);
+}
+
+.gameboard-container {
+    display: flex;
+    justify-content: center;
 }
