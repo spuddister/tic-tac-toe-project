@@ -21,12 +21,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 70px;
 }
 .tiles:hover {
     transform: scale(1.05);
+    background-color: rgb(231, 231, 231);
 }
 
-.gameboard-container {
+.container {
     display: flex;
     justify-content: center;
 }
