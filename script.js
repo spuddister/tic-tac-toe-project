@@ -5,6 +5,10 @@ const Player = (name, token) => {
         coveredTiles.push(newTileIndex);
         coveredTiles.sort();
     }
+    const resetPlayer = () => {
+        score = 0;
+        clearTiles();
+    }
     const incrementScore = () => score++;
     const getTiles = () => coveredTiles;
     const getName = () => name;
@@ -12,12 +16,13 @@ const Player = (name, token) => {
     const getScore = () => score;
     const clearTiles = () => {coveredTiles = [];}
 
-    return {getName, addTile, getTiles, getToken, incrementScore, getScore, clearTiles}
+    return {getName, addTile, getTiles, getToken, incrementScore, getScore, clearTiles, resetPlayer}
 }
 
 const player1 = Player('Player X', 'X');
 const player2 = Player('Player O', 'O');
 
+//The game controller module
 const gameBoardModule = (() => {
     let gameboard = ['','','','','','','','',''];
     const winningCombos = [[1,2,3],[4,5,6],[7,8,9],
@@ -29,6 +34,7 @@ const gameBoardModule = (() => {
     const turnIdentifier = document.getElementsByClassName('card-header-title')[0];
     const scoreboard = document.getElementsByClassName('card-header-icon')[0];
     let currentPlayer = player1;
+    let turnCounter = 0;
     
     gameBoardTiles.forEach(tile => {
         tile.addEventListener('click', playValidation);
@@ -39,18 +45,21 @@ const gameBoardModule = (() => {
     function playValidation(playEvent) {
         //Check for valid player move, then call updateGameboard
         let targetTile = playEvent.target.getAttribute('index');
-        if (gameboard[targetTile] === '' && !checkForWin()) {
+        if (gameboard[targetTile] === '' && !roundWin()) { //checks if the tile is empty and if someone hasn't already won the game
             gameboard[targetTile] = currentPlayer.getToken();
             currentPlayer.addTile(Number(targetTile)+1);
             updateGameboard(targetTile);
-            if (checkForWin()) {
+            if (roundWin()) {
                 endRound();
+            } else if (turnCounter >= 9) { 
+                turnIdentifier.innerText = `It's a Draw`;
             } else {
                 switchTurns();
             }
         }
     }
     function updateGameboard(targetTile) {
+        turnCounter++;
         gameBoardTiles[targetTile].innerText = currentPlayer.getToken();
     }
     
@@ -61,11 +70,10 @@ const gameBoardModule = (() => {
         });
     }
 
-    function checkForWin() {
+    function roundWin() {
         //Compare to winning combinations to determine if victory 
         for (i = 0; i < winningCombos.length; i++){
-            if (
-                currentPlayer.getTiles().includes(winningCombos[i][0]) && 
+            if (currentPlayer.getTiles().includes(winningCombos[i][0]) && 
                 currentPlayer.getTiles().includes(winningCombos[i][1]) && 
                 currentPlayer.getTiles().includes(winningCombos[i][2])) {
                 return true;
@@ -77,13 +85,16 @@ const gameBoardModule = (() => {
     function endRound() {
         currentPlayer.incrementScore();
         updateScoreboard();
+        if (currentPlayer.getScore() >= 3) { //If victory...
+            endGame();
+        } else {
+            turnIdentifier.innerText = `${currentPlayer.getName()} wins the round`;
+            restartBtn.innerText = 'Next Round';
+        }
     }
 
     function updateScoreboard() {
         scoreboard.innerText = `Score ${player1.getScore()}:${player2.getScore()}`;
-        // if (player1.getScore == 3) {
-
-        // }
     }
 
     function switchTurns() {
@@ -94,7 +105,16 @@ const gameBoardModule = (() => {
     function startRound() {
         resetGameboard();
         switchTurns();
+        updateScoreboard();
         player1.clearTiles();
         player2.clearTiles();
+        turnCounter = 0;
+    }
+
+    function endGame() {
+        turnIdentifier.innerText = `${currentPlayer.getName()} wins the game!`;
+        player1.resetPlayer();
+        player2.resetPlayer();
+        restartBtn.innerText = 'Restart';
     }
 })();
