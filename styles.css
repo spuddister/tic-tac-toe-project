@@ -1,3 +1,7 @@
+body {
+    height: 100vh;
+}
+
 .gameboard-wrapper {
     min-width: 350px;
     min-height: 350px;
@@ -27,3 +31,15 @@
     display: flex;
     justify-content: center;
 }
+
+.game-box {
+    visibility: hidden;
+    transform: scale(0.001);
+}
+
+.game-box-transform {
+    transition: 0.8s;
+    visibility: visible;
+    transform: scale(1);
+}
+
